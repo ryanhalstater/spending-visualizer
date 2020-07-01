@@ -1,9 +1,10 @@
 # spending-visualizer
-Tableau visualizations of consumer spending data over 34 years (from BLS API) to discover interesting trends/n
-Data: in tableau_friendly_results.csv (scraped by running main.py) and displayed in visualization.twbx/n
-Note that can specify the BLS series to analyze by adding results from [search](https://beta.bls.gov/dataQuery/find?fq=survey:[cx]&s=popularity:D) to hasSeriesID.csv /n
-
-Data was divided into four regions: Midwest, Northeast, South, West/n/n
+Tableau visualizations of consumer spending data over 34 years (from BLS API) to discover interesting trends  
+Data: in tableau_friendly_results.csv (scraped by running main.py) and displayed in visualization.twbx  
+Note that can specify the BLS series to analyze by adding results from [search](https://beta.bls.gov/dataQuery/find?fq=survey:[cx]&s=popularity:D) to hasSeriesID.csv  
+  
+Data was divided into four regions: Midwest, Northeast, South, West  
+  
 Interesting results:
 * The Northeast and West tend to spend more on food per capita than the South and Midwest
 * All regions spent more per capita on meat than greens in 1985
