@@ -1,8 +1,8 @@
 # spending-visualizer
 Tableau visualizations of consumer spending data over 34 years (from BLS API) to discover interesting trends  
+Python Libraries used: Pandas, Numpy  
 Data: in tableau_friendly_results.csv (scraped and reformatted by running main.py) and displayed in visualization.twbx  
 Note that can specify the BLS series to analyze by adding results from [search](https://beta.bls.gov/dataQuery/find?fq=survey:[cx]&s=popularity:D) to hasSeriesID.csv  
-Libraries used: Pandas, Numpy  
   
 Data was divided into four regions: Midwest, Northeast, South, West  
    
@@ -11,7 +11,7 @@ Interesting results:
 * All regions spent more per capita on meat than greens in 1985
 * All regions spent more per capita on greens than meat in 2018
 * All regions but the South spent per capita more on alcoholic beverages than non-alcoholic beverages over 32 years
-    * The south spent more on alcohol in 27 out of 32 years
+    * The South spent more on alcohol in 27 out of 32 years
 * Between 2016 and 2018, the North had a 64% increase in per capita spending on fish and seafood
 
 Visualization Screenshots:
