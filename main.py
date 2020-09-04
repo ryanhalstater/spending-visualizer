@@ -1,5 +1,6 @@
 import requests
 import json
+import prettytable
 import pandas as pd
 import numpy as np
 import math
@@ -10,12 +11,14 @@ import math
 def main():
     #read series ids and get data from 32 years on each series
     get_data()
+    prepare_inflation_csv()
+    convert_to_present_value(2018)
     #format data so it is friendly for tableau
     reshape_data()
-    return
 
+#make the index years rather than having many rows
 def reshape_data():
-    df = pd.read_csv('results.csv')
+    df = pd.read_csv('unshaped_results_in_pv.csv')
     new_df = pd.DataFrame(columns=['Year','Region','State for Tableau']+list(df['Name of Series'].unique()))
     for yr in df['Year'].unique():
         for rg in df['Region'].unique()[1:]: #to avoid when the region is none
@@ -24,11 +27,59 @@ def reshape_data():
         #for case where no region
         new_row = [yr, 'All', np.nan] + list(df.loc[(df.Region.isna()) & (df.Year == yr)]['Dollars Spent'])
         new_df.loc[len(new_df)] = new_row
-    print(df.columns)
-    print(new_df.columns)
-    new_df.to_csv("tableau_friendly.csv")
+    new_df = new_df.set_index(['Year','Region'])
+    new_df.to_csv("tableau_friendly_results.csv")
 
-#given csv files containing inte
+def adjust_for_inflation():
+    fred = pd.read_csv('CPI_for_food_from_FRED')
+
+def prepare_inflation_csv():
+    df = pd.read_csv('CPI_for_food_from_FRED.csv')
+    print(df.head())
+    df['helper'] = df['DATE'].apply(lambda x: helper(x))
+
+    res = df.loc[df['helper'] == 1]
+    print(res.head())
+    res['Year'] = res.apply(lambda x: x['DATE'][:4], axis=1)
+
+    res = res.drop(['helper', 'DATE'], 1)
+    res = res.set_index(['Year'])
+    res.to_csv('CPI_food_cleaned.csv')
+    print(res.head())
+
+def helper(x):
+    if str(x)[5:7] == '01':
+        return 1
+    return 0
+
+def convert_to_present_value(ref_year):
+    df = pd.read_csv('unshaped_results.csv')
+    inflation_df = pd.read_csv('CPI_food_cleaned.csv')
+    new_index = float(inflation_df.loc[inflation_df['Year'] == ref_year, 'CPIFABSL'])
+
+    #map pandas of inflation to list file so can use
+    #put the adding numbers part to the cleaning_csv if can later
+
+    t1 = list(inflation_df['Year'])
+    t2 = list(inflation_df['CPIFABSL'])
+    inflation_dict = dict(zip(t1, t2))
+
+    def convert(row):
+        # return int(row['Year'])
+        x = row['Year']
+        # return (x == 1913)
+        old_index = inflation_dict[x]
+        # return old_index
+        return (row['Dollars Spent']) * new_index / old_index
+
+    dsa = df.apply(lambda x: convert(x), axis=1)
+    df['Dollars Spent'] = dsa
+    #clean out old index column
+    df = df.drop(['Unnamed: 0'],axis=1)
+    # df = df.set_index(['Year','Lower Bound'])
+    print(df.head())
+    df.to_csv('unshaped_results_in_pv.csv')
+
 def get_data():
     #loop through csv doc from manual search and get all unique series ids
     series_ids = []
@@ -73,7 +124,7 @@ def get_data():
                     value = item['value']
                    # recall tid_values is in form [item_desc, is_everyone, region, state]
                     usable_df.loc[len(usable_df)] = [tid_values[0],tid_values[1],tid_values[2],tid_values[3],year,value]
-    usable_df.to_csv("results.csv")
+    usable_df.to_csv("unshaped_results.csv")
     return
 
 
@@ -88,7 +139,6 @@ def text_to_pandas(file_path):
     for row in all_rows[1:]:
         data_for_df.append(row.rstrip().split('\t'))
     df = pd.DataFrame(data=data_for_df,columns=col_names)
-    # print(df)
     return df
 
 def region_to_state(region):
