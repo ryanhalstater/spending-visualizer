@@ -9,6 +9,8 @@ Data was divided into four regions: Midwest, Northeast, South, West
    
 Interesting results:
 * The Northeast and West tend to spend more on food per capita than the South and Midwest
+* The trends in overall food spending for all regions were not statistically distinct from each other at 25% confidence level
+    * Analyzed by regressing each region's food spending to a linear model and performing two-sided hypothesis tests on slope coefficients with the null being the slope coefficient of the other models
 * All regions spent more per capita on meat than greens in 1985
    * 2005 was the first recorded year where any region spent more on greens than meat
    * All regions spent more per capita on greens than meat in 2016
